@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สื่อการสอน: แบบทดสอบวิชาสุขศึกษา พลศึกษา และศิลปศึกษา</title>
+<style>
+:root {
+  --primary-color: #4a90e2;
+  --success-color: #2ecc71;
+  --bg-color: #f5f7fa;
+  --text-color: #2c3e50;
+}
+
+body {
+  font-family: 'Sarabun', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.6;
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+h1 {
+  text-align: center;
+  color: var(--primary-color);
+  margin-bottom: 10px;
+}
+
+.section-title {
+  background: #eef5fc;
+  color: var(--primary-color);
+  padding: 10px 15px;
+  border-radius: 6px;
+  margin: 25px 0 15px 0;
+  font-size: 1.2rem;
+  border-left: 5px solid var(--primary-color);
+}
+
+.description {
+  text-align: center;
+  color: #7f8c8d;
+  margin-bottom: 30px;
+}
+
+.user-info-box {
+  background: #eef5fc;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  border: 1px solid #b4d4f7;
+}
+
+.user-info-box h3 {
+  margin-top: 0;
+  color: var(--primary-color);
+}
+
+.form-group-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  font-size: 0.95rem;
+}
+
+.form-group input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: 'Sarabun', sans-serif;
+}
+
+.quiz-item {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border-left: 5px solid var(--primary-color);
+}
+
+.question {
+  font-weight: bold;
+  font-size: 1.05rem;
+  margin-bottom: 15px;
+}
+
+.options {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.option-label {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  background: white;
+  border: 1px solid #dcdde1;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.option-label:hover {
+  background: #eef5fc;
+  border-color: var(--primary-color);
+}
+
+.option-label input {
+  margin-right: 12px;
+  transform: scale(1.2);
+}
+
+.btn-submit {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.btn-submit:hover {
+  background: #357abd;
+}
+
+.btn-submit:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.result-box {
+  display: none;
+  padding: 25px;
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  font-size: 1.2rem;
+  border-left: 6px solid var(--success-color);
+}
+
+.result-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #155724;
+  margin-bottom: 10px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>แบบทดสอบวัดความรู้</h1>
+  <p class="description">คำชี้แจง: กรอกข้อมูลให้ครบถ้วน ตอบคำถามทั้ง 20 ข้อ และกดส่งเพื่อบันทึกคะแนนเข้าสู่ระบบ</p>
+
+  <!-- ส่วนแสดงคะแนนสรุปผล -->
+  <div id="result" class="result-box"></div>
+
+  <form id="quizForm">
+    <!-- ข้อมูลส่วนตัวผู้เรียน -->
+    <div class="user-info-box">
+      <h3>ข้อมูลผู้เรียน</h3>
+      <div class="form-group-grid">
+        <div class="form-group">
+          <label for="firstName">ชื่อ:</label>
+          <input type="text" id="firstName" placeholder="กรอกชื่อจริง" required>
+        </div>
+        <div class="form-group">
+          <label for="lastName">นามสกุล:</label>
+          <input type="text" id="lastName" placeholder="กรอกนามสกุล" required>
+        </div>
+        <div class="form-group">
+          <label for="subdistrict">ตำบล:</label>
+          <input type="text" id="subdistrict" placeholder="กรอกชื่อตำบล" required>
+        </div>
+      </div>
+    </div>
+
+    <!-- ส่วนที่ 1: วิชาสุขศึกษา พลศึกษา (10 ข้อ) -->
+    <div class="section-title"><strong>วิชาสุขศึกษา พลศึกษา (ข้อ 1 - 10)</strong></div>
+
+    <div class="quiz-item">
+      <div class="question">1. ข้อใดเป็นผลดีต่อการทำงานของปอด</div>
+      <div class="options">
+        <label class="option-label"><input type="radio" name="q1" value="ก" required> ก. ดูแลรักษาความสะอาดของร่างกายอยู่เสมอ</label>
+        <label class="option-label"><input type="radio" name="q1" value="ข"> ข. อยู่ในที่ที่อากาศถ่ายเทสะดวก</label>
+        <label class="option-label"><input type="radio" name="q1" value="ค"> ค. ไม่กินอาหารรสจัด</label>
+        <label class="option-label"><input type="radio" name="q1" value="ง"> ง. แปรงฟันอย่างน้อยวันละ 2 ครั้ง</label>
+      </div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="question">2. ข้อใดไม่ช่วยให้ระบบไหลเวียนเลือดทำงานได้ดีขึ้น</div>
+      <div class="options">
+        <label class="option-label"><input type="radio" name="q2" value="ก" required> ก. พักผ่อนให้เพียงพอ วันละ 6 - 8 ชั่วโมง</label>
+        <label class="option-label"><input type="radio" name="q2" value="ข"> ข. อาบน้ำทุกวันและแปรงฟัน วันละ 2 ครั้ง</label>
+        <label class="option-label"><input type="radio" name="q2" value="ค"> ค. รับประทานอาหารให้ครบ 5 หมู่</label>
+        <label class="option-label"><input type="radio" name="q2" value="ง"> ง. ออกกำลังกายสม่ำเสมอ อย่างน้อยสัปดาห์ละ 3 วัน</label>
+      </div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="question">3. เมื่อเริ่มมีอาการเปลี่ยนแปลงทางด้านต่าง ๆ เกิดขึ้น เช่น มีประจำเดือน ฝันเปียก หงุดหงิด มีกลิ่นตัว เป็นสิว ผู้เรียนควรปฏิบัติตนอย่างไร</div>
+      <div class="options">
+        <label class="option-label"><input type="radio" name="q3" value="ก" required> ก. หมั่นรักษาสุขภาพอนามัยและสภาพจิตใจของตนเอง</label>
+        <label class="option-label"><input type="radio" name="q3" value="ข"> ข. บอกพ่อแม่ให้รับรู้ทุก ๆ เรื่องทันที</label>
+        <label class="option-label"><input type="radio" name="q3" value="ค"> ค. เก็บเป็นความลับ ไม่บอกใครเพราะถือเป็นเรื่องน่าอาย</label>
+        <label class="option-label"><input type="radio" name="q3" value="ง"> ง. ปล่อยให้ทุกอย่างเป็นไปตามธรรมชาติ โดยไม่ต้องใส่ใจ</label>
+      </div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="question">4. การผ่อนคลายร่างกายภายหลังออกกำลังกาย ควรปฏิบัติตามข้อใด</div>
+      <div class="options">
+        <label class="option-label"><input type="radio" name="q4" value="ก" required> ก. ดื่มน้ำเย็นจัดทันที</label>
+        <label class="option-label"><input type="radio" name="q4" value="ข"> ข. นั่งพักผ่อนทันที</label>
+        <label class="option-label"><input type="radio" name="q4" value="ค"> ค. วิ่งเหยาะ ๆ เพื่อผ่อนคลาย</label>
+        <label class="option-label"><input type="radio" name="q4" value="ง"> ง. อาบน้ำเพื่อให้ร่างกายเย็นลง</label>
+      </div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="question">5. หากต้องการส่งเสริมให้เด็กรับประทานผักมากขึ้น ควรใช้วิธีใด</div>
+      <div class="options">
+        <label class="option-label"><input type="radio" name="q5" value="ก" required> ก. ใช้ผักผสมในอาหารทุกชนิด</label>
+        <label class="option-label"><input type="radio" name="q5" value="ข"> ข. พ่อแม่เป็นแบบอย่างในการรับประทานผัก</label>
+        <label class="option-label"><input type="radio" name="q5" value="ค"> ค. เลือกผักที่พ่อแม่ชอบรับประทาน</label>
+        <label class="option-label"><input type="radio" name="q5" value="ง"> ง. เลือกผักที่ไม่มีขมเท่านั้น</label>
+      </div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="question">6. ข้อใดไม่ใช่แนวทางการประกอบอาหารเพื่อให้ได้อาหารที่สะอาด ปลอดภัย และมีคุณค่าทางโภชนาการ</div>
+      <div class="options">
+        <label class="option-label"><input type="radio" name="q6" value="ก" required> ก. ล้างผักให้สะอาดก่อนหั่น</label>
+        <label class="option-label"><input type="radio" name="q6" value="ข"> ข. ใช้เครื่องปรุงรสที่มีเครื่องหมาย อย.</label>
+        <label class="option-label"><input type="radio" name="q6" value="ค"> ค. เลือกใช้เกลือเสริมไอโอดีน</label>
+        <label class="option-label"><input type="radio" name="q6" value="ง"> ง. ใช้น้ำมะนาวในการปรุงอาหารให้สุก</label>
+      </div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="question">7. ข้อใดไม่ใช่ปัญหาสุขภาพที่เกิดจากการกินอาหาร หวานจัด มันจัด และเค็มจัดเป็นประจำ</div>
+      <div class="options">
+        <label class="option-label"><input type="radio" name="q7" value="ก" required> ก. โรคเกี่ยวกับไต</label>
+        <label class="option-label"><input type="radio" name="q7" value="ข"> ข. โรคเบาหวาน</label>
+        <label class="option-label"><input type="radio" name="q7" value="ค"> ค. โรคขาดสารอาหาร</label>
+        <label class="option-label"><input type="radio" name="q7" value="ง"> ง. โรคหัวใจและหลอดเลือด</label>
+      </div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="question">8. ข้อใดเป็นสาเหตุสำคัญของการเกิดโรคอ้วน</div>
+      <div class="options">
+        <label class="option-label"><input type="radio" name="q8" value="ก" required> ก. กรรมพันธุ์</label>
+        <label class="option-label"><input type="radio" name="q8" value="ข"> ข. การรับประทานรสเค็มจัดติดต่อกัน</label>
+        <label class="option-label"><input type="radio" name="q8" value="ค"> ค. มีความผิดปกติของระบบหลอดเลือดและหัวใจ</label>
+        <label class="option-label"><input type="radio" name="q8" value="ง"> ง. บริโภคอาหารมากเกินความต้องการของร่างกาย</label>
+      </div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="question">9. วิธีป้องกันการติดโรคไข้หวัดนก ควรปฏิบัติตามข้อใด</div>
+      <div class="options">
+        <label class="option-label"><input type="radio" name="q9" value="ก" required> ก. ฉีดวัคซีนหลากหลายยี่ห้อ</label>
+        <label class="option-label"><input type="radio" name="q9" value="ข"> ข. สวมหน้ากากอนามัยตลอดเวลา</label>
+        <label class="option-label"><input type="radio" name="q9" value="ค"> ค. รับประทานยาปฏิชีวนะเป็นประจำ</label>
+        <label class="option-label"><input type="radio" name="q9" value="ง"> ง. งดการรับประทานเนื้อไก่/เป็ด ที่กึ่งสุกกึ่งดิบ</label>
+      </div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="question">10. ข้อใดไม่ใช่การป้องกันโรคที่ถูกต้อง เมื่อมีอาการระบาดของอหิวาตกโรค</div>
+      <div class="options">
+        <label class="option-label"><input type="radio" name="q10" value="ก" required> ก. ดื่มสารละลายน้ำตาลเกลือแร่แทนน้ำ</label>
+        <label class="option-label"><input type="radio" name="q10" value="ข"> ข. ล้างมือก่อนกินอาหารทุกครั้ง</label>
+        <label class="option-label"><input type="radio" name="q10" value="ค"> ค. อุ่นอาหารให้ร้อนก่อนนำมากินทุกครั้ง</label>
+        <label class="option-label"><input type="radio" name="q10" value="ง"> ง. กินอาหารที่ปรุงสุกแล้วเท่านั้น</label>
+      </div>
+    </div>
+
+    <!-- ส่วนที่ 2: วิชาศิลปศึกษา (10 ข้อ) -->
+    <div class="section-title"><strong>วิชาศิลปศึกษา (ข้อ 11 - 20)</strong></div>
+
+    <div class="quiz-item">
+      <div class="question">11. ใช้กระดาษบาง ๆ วางทาบลงบนเหรียญบาท แล้วฝนด้วยดินสอดำ จะทำให้เกิดทัศนธาตุในข้อใด</div>
+      <div class="options">
+        <label class="option-label"><input type="radio" name="q11" value="ก" required> ก. เส้น</label>
+        <label class="option-label"><input type="radio" name="q11" value="ข"> ข. จุด</label>
+        <label class="option-label"><input type="radio" name="q11" value="ค"> ค. รูปทรง</label>
+        <label class="option-label"><input type="radio" name="q11" value="ง"> ง. พื้นผิว</label>
+      </div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="question">12. การวาดภาพทิวทัศน์รูปใดที่ให้ความรู้สึกเงียบ สงบ ผ่อนคลาย</div>
+      <div class="options">
+        <label class="option-label"><input type="radio" name="q12" value="ก" required> ก. ภาพอาหารในจาน</label>
+        <label class="option-label"><input type="radio" name="q12" value="ข"> ข. ภาพท้องทะเลตัดขอบฟ้า</label>
+        <label class="option-label"><input type="radio" name="q12" value="ค"> ค. ภาพดอกไม้ในแจกัน</label>
+        <label class="option-label"><input type="radio" name="q12" value="ง"> ง. ภาพผลไม้ในตะกร้า</label>
+      </div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="question">13. หากผู้เรียนต้องการวาดภาพเหมือนบุคคลจะต้องศึกษาในเรื่องใด</div>
+      <div class="options">
+        <label class="option-label"><input type="radio" name="q13" value="ก" required> ก. กายวิภาคศาสตร์</label>
+        <label class="option-label"><input type="radio" name="q13" value="ข"> ข. การออกแบบโครงสร้างมนุษย์</label>
+        <label class="option-label"><input type="radio" name="q13" value="ค"> ค. การวาดเส้นแสงและเงา</label>
+        <label class="option-label"><input type="radio" name="q13" value="ง"> ง. การวาดภาพรูปปูนปั้น</label>
+      </div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="question">14. ข้อใดเป็นภาพที่เขียนขึ้นจากต้นแบบที่เป็นธรรมชาติ</div>
+      <div class="options">
+        <label class="option-label"><input type="radio" name="q14" value="ก" required> ก. ภาพรถยนต์</label>
+        <label class="option-label"><input type="radio" name="q14" value="ข"> ข. ภาพน้ำตก</label>
+        <label class="option-label"><input type="radio" name="q14" value="ค"> ค. ภาพทหาร</label>
+        <label class="option-label"><input type="radio" name="q14" value="ง"> ง. ภาพเครื่องบินบนท้องฟ้า</label>
+      </div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="question">15. การเขียนภาพตึกแถวสองข้างทางควรใช้หลักการใดในการเขียนภาพ</div>
+      <div class="options">
+        <label class="option-label"><input type="radio" name="q15" value="ก" required> ก. จุดและเส้น</label>
+        <label class="option-label"><input type="radio" name="q15" value="ข"> ข. แสงและเงา</label>
+        <label class="option-label"><input type="radio" name="q15" value="ค"> ค. ทัศนียภาพเชิงเส้น</label>
+        <label class="option-label"><input type="radio" name="q15" value="ง"> ง. การออกแบบพื้นผิว</label>
+      </div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="question">16. การใช้ยางลบมาแกะสลักเป็นตัวอักษร เมื่อพิมพ์ออกมาจะสลับด้านหมายถึงการพิมพ์แบบใด</div>
+      <div class="options">
+        <label class="option-label"><input type="radio" name="q16" value="ก" required> ก. แบบฉลุ</label>
+        <label class="option-label"><input type="radio" name="q16" value="ข"> ข. แบบนูน</label>
+        <label class="option-label"><input type="radio" name="q16" value="ค"> ค. แบบราบ</label>
+        <label class="option-label"><input type="radio" name="q16" value="ง"> ง. แบบร่องลึก</label>
+      </div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="question">17. หัสดีลิงค์เป็นสัตว์หิมพานต์ ที่ช่างไทยโบราณสร้างสรรค์ โดยการผสมผสานตามข้อใด</div>
+      <div class="options">
+        <label class="option-label"><input type="radio" name="q17" value="ก" required> ก. นกกับช้าง</label>
+        <label class="option-label"><input type="radio" name="q17" value="ข"> ข. นกกับลิง</label>
+        <label class="option-label"><input type="radio" name="q17" value="ค"> ค. คนกับม้า</label>
+        <label class="option-label"><input type="radio" name="q17" value="ง"> ง. คนกับช้าง</label>
+      </div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="question">18. ข้อใดเป็นวิธีการแกะสลักลวดลายบานประตูไม้ที่ถูกต้อง</div>
+      <div class="options">
+        <label class="option-label"><input type="radio" name="q18" value="ก" required> ก. เริ่มต้นแกะลวดลายส่วนใดก่อนก็ได้ตามต้องการ</label>
+        <label class="option-label"><input type="radio" name="q18" value="ข"> ข. แกะลวดลายส่วนที่เป็นรายละเอียดก่อน</label>
+        <label class="option-label"><input type="radio" name="q18" value="ค"> ค. แกะรูปทรงลวดลายที่มีขนาดใหญ่ก่อน</label>
+        <label class="option-label"><input type="radio" name="q18" value="ง"> ง. ตัดแผ่นไม้ที่จะแกะสลักลวดลายออกเป็นส่วนย่อย ๆ ก่อน แล้วจึงแกะสลัก</label>
+      </div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="question">19. การตีเกราะเคาะไม้ ถือเป็นจุดเริ่มต้นของเครื่องดนตรีประเภทใด</div>
+      <div class="options">
+        <label class="option-label"><input type="radio" name="q19" value="ก" required> ก. ดีด</label>
+        <label class="option-label"><input type="radio" name="q19" value="ข"> ข. สี</label>
+        <label class="option-label"><input type="radio" name="q19" value="ค"> ค. ตี</label>
+        <label class="option-label"><input type="radio" name="q19" value="ง"> ง. เป่า</label>
+      </div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="question">20. ข้อใดเป็นเครื่องดนตรีชิ้นสำคัญในยุคก่อนสมัยสุโขทัย</div>
+      <div class="options">
+        <label class="option-label"><input type="radio" name="q20" value="ก" required> ก. กลองแขก</label>
+        <label class="option-label"><input type="radio" name="q20" value="ข"> ข. กลองสะบัดชัย</label>
+        <label class="option-label"><input type="radio" name="q20" value="ค"> ค. กลองชาตรี</label>
+        <label class="option-label"><input type="radio" name="q20" value="ง"> ง. กลองมโหระทึก</label>
+      </div>
+    </div>
+
+    <button type="submit" id="submitBtn" class="btn-submit">ส่งคำตอบและบันทึกคะแนน</button>
+  </form>
+</div>
+
+<script>
+// URL Web App ของคุณครูที่เชื่อมโยงระบบหลังบ้าน
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz3Q-d1LCNaqRZfsOo0H07QeC8ZMYX_EcejOpGzBamDspz-QsxA4aGu3Egx0b_y_fwLjA/exec";
+
+// คำตอบที่ถูกต้องสำหรับการตรวจคะแนน (ไม่แสดงให้ผู้เรียนเห็น)
+const answerKey = {
+  1: "ข", 2: "ข", 3: "ก", 4: "ค", 5: "ข",
+  6: "ง", 7: "ค", 8: "ง", 9: "ง", 10: "ก",
+  11: "ง", 12: "ข", 13: "ก", 14: "ข", 15: "ค",
+  16: "ข", 17: "ก", 18: "ค", 19: "ค", 20: "ง"
+};
+
+document.getElementById('quizForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const fName = document.getElementById('firstName').value.trim();
+  const lName = document.getElementById('lastName').value.trim();
+  const subDist = document.getElementById('subdistrict').value.trim();
+
+  let score = 0;
+  const totalQuestions = 20;
+
+  // ตรวจคำตอบและคำนวณคะแนนเท่านั้น (ไม่แสดงเฉลยหรือไฮไลต์สี)
+  for (let i = 1; i <= totalQuestions; i++) {
+    const selectedOpt = this.querySelector(`input[name="q${i}"]:checked`);
+    if (selectedOpt && selectedOpt.value === answerKey[i]) {
+      score++;
+    }
+  }
+
+  const finalScoreText = score + " / " + totalQuestions;
+
+  // ยิงส่งข้อมูลตรงไปที่ Google Sheets
+  fetch(WEB_APP_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: `firstName=${encodeURIComponent(fName)}&lastName=${encodeURIComponent(lName)}&subdistrict=${encodeURIComponent(subDist)}&score=${encodeURIComponent(finalScoreText)}`
+  });
+
+  // แสดงผลสรุปคะแนนบนเบราว์เซอร์
+  const resultBox = document.getElementById('result');
+  resultBox.innerHTML = `
+    <div class="result-title">🎉 บันทึกข้อมูลและส่งคะแนนเรียบร้อยแล้ว!</div>
+    <div style="color: #155724;"><strong>ผู้เรียน:</strong> คุณ ${fName} ${lName} &nbsp;&nbsp;|&nbsp;&nbsp; <strong>ตำบล:</strong> ${subDist}</div>
+    <div style="font-size: 1.6rem; margin-top: 15px; color: #28a745; font-weight: bold;">
+      คะแนนที่คุณได้คือ: ${finalScoreText} คะแนน
+    </div>
+  `;
+  resultBox.style.display = 'block';
+
+  const submitBtn = document.getElementById('submitBtn');
+  submitBtn.disabled = true;
+  submitBtn.innerText = "ส่งคำตอบสำเร็จแล้ว";
+
+  window.scrollTo({top: 0, behavior: 'smooth'});
+});
+</script>
+
+</body>
+</html>
